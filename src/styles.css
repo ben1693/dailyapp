@@ -136,7 +136,21 @@ html, body {
 .view.active { display: block; animation: fade .25s ease; }
 @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
 
-.day-progress { display: flex; align-items: center; gap: 16px; margin: 14px 0 46px; }
+/* liturgical banner */
+.lit-banner { display: flex; align-items: center; gap: 16px; padding: 18px 0 22px; border-bottom: 1px solid var(--line); margin-top: 6px; }
+.lit-dot { flex: 0 0 auto; width: 13px; height: 13px; border-radius: 50%; box-shadow: 0 0 0 4px var(--line-soft); }
+.lit-dot.ring { box-shadow: 0 0 0 1px var(--line-2), 0 0 0 4px var(--line-soft); }
+.lit-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.lit-title { font-family: var(--serif); font-size: 17px; font-weight: 600; color: var(--ink); }
+.lit-meta { font-size: 12.5px; color: var(--ink-dim); }
+.lit-meta em { color: var(--ink-faint); font-style: italic; }
+.lit-badges { display: flex; flex-wrap: wrap; gap: 8px; flex: 0 0 auto; }
+.lit-badge { font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--accent); border: 1px solid var(--line-2); border-radius: 999px; padding: 5px 11px; white-space: nowrap; }
+.lit-badge.fast { color: var(--red); border-color: var(--red); }
+.lit-badge.abst { color: var(--accent-bright); border-color: var(--accent); }
+.lit-badge.penance { color: var(--ink-dim); }
+
+.day-progress { display: flex; align-items: center; gap: 16px; margin: 22px 0 46px; }
 .day-progress-bar { flex: 1; height: 6px; background: var(--line-soft); border-radius: 999px; overflow: hidden; }
 .day-progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-bright)); transition: width .45s ease; }
 .day-progress-text { font-size: 13px; color: var(--ink-dim); white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
@@ -346,4 +360,6 @@ body.modal-open { overflow: hidden; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .date-center { min-width: 120px; }
   .mini-stat:nth-child(2) { display: none; }
+  .lit-banner { flex-wrap: wrap; }
+  .lit-badges { width: 100%; }
 }

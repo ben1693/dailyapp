@@ -125,7 +125,7 @@
   const els = {};
   function cacheEls() {
     [
-      "sideStreak", "sideToday",
+      "sideStreak", "sideToday", "litBanner",
       "dateMain", "dateSub", "dayProgressFill", "dayProgressText",
       "showCompletedToggle2", "themeToggle",
       "statStreak", "statBest", "statTotal", "statDays", "stat30", "statAvg",
@@ -146,6 +146,8 @@
     const dObj = parseYmd(currentDate);
     els.dateMain.textContent = currentDate === today ? "Today" : dObj.toLocaleDateString(undefined, { weekday: "long" });
     els.dateSub.textContent = dObj.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+
+    renderLitBanner(dObj);
 
     const modalOpenId = els.modal.dataset.itemId;
 
@@ -258,6 +260,28 @@
   function pulsePoints() {
     const el = els.sideToday;
     el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse");
+  }
+
+  function renderLitBanner(dateObj) {
+    if (!window.Liturgical) { els.litBanner.hidden = true; return; }
+    const lit = window.Liturgical.getDay(dateObj);
+    els.litBanner.hidden = false;
+
+    const badges = [];
+    if (lit.fast) badges.push('<span class="lit-badge fast">Fast &amp; Abstinence</span>');
+    else if (lit.abstinence) badges.push('<span class="lit-badge abst">Abstinence</span>');
+    else if (lit.fridayPenance) badges.push('<span class="lit-badge penance">Friday — a day of penance</span>');
+
+    const isWhite = lit.color === "White";
+    els.litBanner.innerHTML =
+      `<span class="lit-dot${isWhite ? " ring" : ""}" style="background:${lit.colorHex}"></span>` +
+      `<div class="lit-text">` +
+        `<span class="lit-title">${escapeHtml(lit.title)}</span>` +
+        `<span class="lit-meta">${escapeHtml(lit.season)} · ${escapeHtml(lit.color)}` +
+        (lit.note ? ` &middot; <em>${escapeHtml(lit.note)}</em>` : "") +
+        `</span>` +
+      `</div>` +
+      (badges.length ? `<div class="lit-badges">${badges.join("")}</div>` : "");
   }
 
   function removeItem(id) {

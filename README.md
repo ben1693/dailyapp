@@ -27,6 +27,15 @@ visualizations.
   - **Consistency heatmap** — a half-year calendar shaded by points earned.
   - **30-day points bar chart**.
   - **Habit strength** — per-item completion rate over the last 30 days.
+- **Liturgical calendar awareness** — a banner on the Daily page shows the
+  current **season**, **liturgical color** (with a color dot), the day's
+  **celebration** (Sundays, solemnities/feasts, and a curated saint-of-the-day),
+  a short seasonal note, and **fast/abstinence** badges. It's computed entirely
+  offline from the Easter date, so it's correct for any year. Notes on scope:
+  the saint list is a curated subset of major solemnities/feasts and popular
+  memorials (not exhaustive), and **Ascension** & **Corpus Christi** use the
+  universal-calendar Thursday (some countries, including most US dioceses,
+  transfer them to the following Sunday).
 - **History navigation** — step back through previous days to log or review.
 - **Private & local** — all data lives in your browser via `localStorage`.
   Export a JSON backup any time and re-import it later.
@@ -54,6 +63,8 @@ the folder onto Netlify, Vercel, or any static host.
 index.html        markup & layout
 src/styles.css     iron-&-gold theme
 src/data.js        default Catholic prayer library (full prayer texts)
+src/liturgical.js  offline liturgical calendar (Easter computus, seasons,
+                   colors, feasts, fast/abstinence)
 src/app.js         all logic: state, completions, streaks, charts, storage
 ```
 
