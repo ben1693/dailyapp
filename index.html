@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#15110c" />
+  <title>Lauds &mdash; Daily Prayer for Men</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">&#10013;</span>
+        <div class="brand-text">
+          <h1>LAUDS</h1>
+          <p class="brand-sub">Daily Prayer &amp; Discipline</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="score-pill" title="Points earned today">
+          <span class="score-label">TODAY</span>
+          <span class="score-value" id="todayPoints">0</span>
+          <span class="score-unit">pts</span>
+        </div>
+        <div class="streak-pill" id="streakPill" title="Current daily streak">
+          <span class="streak-flame">&#9650;</span>
+          <span class="streak-value" id="streakValue">0</span>
+          <span class="streak-label">day streak</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Date strip -->
+    <div class="date-strip">
+      <button class="date-nav" id="prevDay" aria-label="Previous day">&#8249;</button>
+      <div class="date-center">
+        <span class="date-main" id="dateMain">Today</span>
+        <span class="date-sub" id="dateSub"></span>
+      </div>
+      <button class="date-nav" id="nextDay" aria-label="Next day">&#8250;</button>
+      <button class="today-btn" id="todayBtn">Today</button>
+    </div>
+
+    <!-- Nav tabs -->
+    <nav class="tabs">
+      <button class="tab active" data-view="day">Daily</button>
+      <button class="tab" data-view="stats">Stats</button>
+      <button class="tab" data-view="manage">Manage</button>
+    </nav>
+
+    <!-- DAILY VIEW -->
+    <main id="view-day" class="view active">
+      <div class="day-progress">
+        <div class="day-progress-bar"><div id="dayProgressFill" class="day-progress-fill"></div></div>
+        <span id="dayProgressText" class="day-progress-text">0 / 0 pts</span>
+      </div>
+
+      <section class="block" data-block="morning">
+        <div class="block-head">
+          <h2><span class="block-icon">&#9788;</span> Morning</h2>
+          <span class="block-count" id="count-morning"></span>
+        </div>
+        <ul class="prayer-list" id="list-morning"></ul>
+      </section>
+
+      <section class="block" data-block="afternoon">
+        <div class="block-head">
+          <h2><span class="block-icon">&#9728;</span> Afternoon</h2>
+          <span class="block-count" id="count-afternoon"></span>
+        </div>
+        <ul class="prayer-list" id="list-afternoon"></ul>
+      </section>
+
+      <section class="block" data-block="evening">
+        <div class="block-head">
+          <h2><span class="block-icon">&#9789;</span> Evening</h2>
+          <span class="block-count" id="count-evening"></span>
+        </div>
+        <ul class="prayer-list" id="list-evening"></ul>
+      </section>
+
+      <section class="block" data-block="todo">
+        <div class="block-head">
+          <h2><span class="block-icon">&#9876;</span> Tasks</h2>
+          <span class="block-count" id="count-todo"></span>
+        </div>
+        <ul class="prayer-list" id="list-todo"></ul>
+      </section>
+
+      <div class="show-completed-row">
+        <label class="switch">
+          <input type="checkbox" id="showCompletedToggle" />
+          <span class="switch-track"><span class="switch-thumb"></span></span>
+          <span class="switch-text">Show completed items</span>
+        </label>
+      </div>
+    </main>
+
+    <!-- STATS VIEW -->
+    <main id="view-stats" class="view">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-num" id="statStreak">0</span>
+          <span class="stat-cap">Current Streak</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="statBest">0</span>
+          <span class="stat-cap">Best Streak</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="statTotal">0</span>
+          <span class="stat-cap">Total Points</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="statDays">0</span>
+          <span class="stat-cap">Days Active</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="stat30">0</span>
+          <span class="stat-cap">30-Day Rate</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="statAvg">0</span>
+          <span class="stat-cap">Avg Pts / Active Day</span>
+        </div>
+      </div>
+
+      <section class="panel">
+        <div class="panel-head"><h3>Consistency</h3><span class="panel-sub" id="heatmapRange"></span></div>
+        <div class="heatmap-wrap">
+          <div id="heatmap" class="heatmap"></div>
+          <div class="heat-legend">
+            <span>Less</span>
+            <span class="heat-cell l0"></span>
+            <span class="heat-cell l1"></span>
+            <span class="heat-cell l2"></span>
+            <span class="heat-cell l3"></span>
+            <span class="heat-cell l4"></span>
+            <span>More</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h3>Points &mdash; Last 30 Days</h3></div>
+        <div id="barChart" class="bar-chart"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h3>Habit Strength</h3><span class="panel-sub">completion rate, last 30 days</span></div>
+        <div id="habitBars" class="habit-bars"></div>
+      </section>
+    </main>
+
+    <!-- MANAGE VIEW -->
+    <main id="view-manage" class="view">
+      <section class="panel">
+        <div class="panel-head"><h3>Add Custom Prayer or Task</h3></div>
+        <form id="addForm" class="add-form">
+          <div class="field">
+            <label>Type</label>
+            <select id="addType">
+              <option value="morning">Morning Prayer</option>
+              <option value="afternoon">Afternoon Prayer</option>
+              <option value="evening">Evening Prayer</option>
+              <option value="todo">Task / To-Do</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Title</label>
+            <input type="text" id="addTitle" placeholder="e.g. Daily Rosary" maxlength="80" required />
+          </div>
+          <div class="field field-text" id="addTextWrap">
+            <label>Prayer text <span class="muted">(optional)</span></label>
+            <textarea id="addText" rows="3" placeholder="The words you'll pray&hellip;"></textarea>
+          </div>
+          <div class="field field-pts">
+            <label>Points</label>
+            <input type="number" id="addPoints" min="1" max="100" value="1" />
+          </div>
+          <button type="submit" class="btn btn-gold">Add</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h3>Library</h3>
+          <span class="panel-sub">toggle items on or off your daily list</span>
+        </div>
+        <div id="manageList" class="manage-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h3>Data</h3></div>
+        <div class="data-actions">
+          <button class="btn" id="exportBtn">Export Backup</button>
+          <button class="btn" id="importBtn">Import Backup</button>
+          <input type="file" id="importFile" accept="application/json" hidden />
+          <button class="btn btn-danger" id="resetBtn">Reset Everything</button>
+        </div>
+        <p class="muted small">All data is stored privately in this browser. Export regularly to keep a backup.</p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>&ldquo;Pray without ceasing.&rdquo; &mdash; 1 Thessalonians 5:17</p>
+    </footer>
+  </div>
+
+  <!-- Prayer reading modal -->
+  <div id="modal" class="modal-overlay" hidden>
+    <div class="modal">
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+      <h2 id="modalTitle"></h2>
+      <div id="modalText" class="modal-text"></div>
+      <div class="modal-actions">
+        <button class="btn btn-gold" id="modalComplete">Mark as Prayed</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="src/data.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
