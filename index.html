@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#16202e" />
+  <meta name="theme-color" content="#0e1622" />
   <title>Lauds &mdash; Daily Prayer for Men</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -29,24 +29,13 @@
         <button class="nav-item" data-view="settings"><span class="nav-ico">&#9881;</span><span>Settings</span></button>
       </nav>
 
-      <a class="scripture-link" href="https://www.biblegateway.com/passage/?search=Romans+12&version=RSVCE" target="_blank" rel="noopener">
-        <span class="scripture-ico">&#9783;</span>
-        <span class="scripture-text">Read Scripture<small>BibleGateway &#8599;</small></span>
-      </a>
-
       <div class="sidebar-stats">
-        <div class="mini-stat">
-          <span class="mini-val" id="sideStreak">0</span>
-          <span class="mini-cap">day streak</span>
-        </div>
-        <div class="mini-stat">
-          <span class="mini-val" id="sideToday">0</span>
-          <span class="mini-cap">pts today</span>
-        </div>
+        <div class="mini-stat"><span class="mini-val" id="sideStreak">0</span><span class="mini-cap">day streak</span></div>
+        <div class="mini-stat"><span class="mini-val" id="sideToday">0</span><span class="mini-cap">pts today</span></div>
       </div>
 
-      <a class="sidebar-quote" href="https://www.biblegateway.com/passage/?search=1+Thessalonians+5:16-18&version=RSVCE" target="_blank" rel="noopener">
-        &ldquo;Pray without ceasing.&rdquo;<span>1 Thessalonians 5:17 &#8599;</span>
+      <a class="scripture-link" href="https://www.biblegateway.com/passage/?search=Romans+12&version=RSVCE" target="_blank" rel="noopener">
+        Read Scripture <span>BibleGateway &#8599;</span>
       </a>
     </aside>
 
@@ -62,12 +51,6 @@
           </div>
           <button class="date-nav" id="nextDay" aria-label="Next day">&#8250;</button>
           <button class="today-btn" id="todayBtn">Today</button>
-        </div>
-        <div class="topbar-right">
-          <div class="score-pill" title="Points earned today">
-            <span class="score-value" id="todayPoints">0</span>
-            <span class="score-unit">pts today</span>
-          </div>
         </div>
       </header>
 
@@ -123,15 +106,6 @@
             <ul class="prayer-list" id="list-todo" data-block="todo"></ul>
           </section>
         </div>
-
-        <div class="show-completed-row">
-          <label class="switch">
-            <input type="checkbox" id="showCompletedToggle" />
-            <span class="switch-track"><span class="switch-thumb"></span></span>
-            <span class="switch-text">Show completed items</span>
-          </label>
-          <span class="hint-drag">Drag prayers between sections &middot; hover a row to remove</span>
-        </div>
       </main>
 
       <!-- STATS VIEW -->
@@ -174,54 +148,12 @@
           <div class="panel-head"><h3>Appearance</h3></div>
           <div class="setting-row">
             <div class="setting-label"><span>Dark mode</span><small>Switch between light and dark themes</small></div>
-            <label class="switch">
-              <input type="checkbox" id="themeToggle" />
-              <span class="switch-track"><span class="switch-thumb"></span></span>
-            </label>
+            <label class="switch"><input type="checkbox" id="themeToggle" /><span class="switch-track"><span class="switch-thumb"></span></span></label>
           </div>
           <div class="setting-row">
             <div class="setting-label"><span>Show completed by default</span><small>Keep finished items visible instead of hiding them for the day</small></div>
-            <label class="switch">
-              <input type="checkbox" id="showCompletedToggle2" />
-              <span class="switch-track"><span class="switch-thumb"></span></span>
-            </label>
+            <label class="switch"><input type="checkbox" id="showCompletedToggle2" /><span class="switch-track"><span class="switch-thumb"></span></span></label>
           </div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-head"><h3>Scripture</h3></div>
-          <div class="setting-row">
-            <div class="setting-label"><span>Daily reading</span><small>Open the Word in a new tab</small></div>
-            <a class="btn btn-accent" href="https://www.biblegateway.com/" target="_blank" rel="noopener">Open BibleGateway &#8599;</a>
-          </div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-head"><h3>Add Custom Prayer or Task</h3></div>
-          <form id="addForm" class="add-form">
-            <div class="field">
-              <label>Type</label>
-              <select id="addType">
-                <option value="morning">Morning Prayer</option>
-                <option value="afternoon">Afternoon Prayer</option>
-                <option value="evening">Evening Prayer</option>
-                <option value="todo">Task / To-Do</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Title</label>
-              <input type="text" id="addTitle" placeholder="e.g. Daily Rosary" maxlength="80" required />
-            </div>
-            <div class="field field-text" id="addTextWrap">
-              <label>Prayer text <span class="muted">(optional)</span></label>
-              <textarea id="addText" rows="3" placeholder="The words you'll pray&hellip;"></textarea>
-            </div>
-            <div class="field field-pts">
-              <label>Points</label>
-              <input type="number" id="addPoints" min="1" max="100" value="1" />
-            </div>
-            <button type="submit" class="btn btn-accent">Add</button>
-          </form>
         </section>
 
         <section class="panel">

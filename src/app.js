@@ -50,7 +50,7 @@
         timeOfDay: "todo", points: t.points, active: t.defaultActive, builtin: true,
       });
     });
-    return { items, completions: {}, settings: { showCompleted: false, theme: "light" } };
+    return { items, completions: {}, settings: { showCompleted: false, theme: "dark" } };
   }
 
   function load() {
@@ -63,7 +63,7 @@
         if (!state.completions) state.completions = {};
         if (!state.settings) state.settings = {};
         if (typeof state.settings.showCompleted !== "boolean") state.settings.showCompleted = false;
-        if (!state.settings.theme) state.settings.theme = "light";
+        if (!state.settings.theme) state.settings.theme = "dark";
       }
     } catch (e) {
       console.error("Failed to load state, resetting.", e);
@@ -125,9 +125,9 @@
   const els = {};
   function cacheEls() {
     [
-      "todayPoints", "sideStreak", "sideToday",
+      "sideStreak", "sideToday",
       "dateMain", "dateSub", "dayProgressFill", "dayProgressText",
-      "showCompletedToggle", "showCompletedToggle2", "themeToggle",
+      "showCompletedToggle2", "themeToggle",
       "statStreak", "statBest", "statTotal", "statDays", "stat30", "statAvg",
       "heatmap", "heatmapRange", "barChart", "habitBars",
       "manageList", "modal", "modalTitle", "modalText", "modalComplete", "modalClose", "toast",
@@ -172,14 +172,12 @@
 
     const pts = pointsForDate(currentDate);
     const maxPts = maxPointsForDate(currentDate);
-    els.todayPoints.textContent = pts;
     els.dayProgressText.textContent = `${pts} / ${maxPts} pts`;
     els.dayProgressFill.style.width = (maxPts > 0 ? Math.round((pts / maxPts) * 100) : 0) + "%";
 
     els.sideStreak.textContent = currentStreak();
     els.sideToday.textContent = pointsForDate(today);
 
-    els.showCompletedToggle.checked = state.settings.showCompleted;
     if (els.showCompletedToggle2) els.showCompletedToggle2.checked = state.settings.showCompleted;
     if (els.themeToggle) els.themeToggle.checked = state.settings.theme === "dark";
 
@@ -218,12 +216,8 @@
     title.className = "row-title";
     title.textContent = item.title;
     main.appendChild(title);
-    if (item.kind === "prayer" && item.text) {
-      const hint = document.createElement("span");
-      hint.className = "row-hint";
-      hint.textContent = "Tap to read";
-      main.appendChild(hint);
-    }
+    const readable = item.kind === "prayer" && item.text;
+    if (readable) main.classList.add("clickable");
 
     const pts = document.createElement("span");
     pts.className = "row-pts";
@@ -244,10 +238,7 @@
     li.appendChild(pts);
     li.appendChild(remove);
 
-    if (item.kind === "prayer" && item.text) {
-      main.style.cursor = "pointer";
-      main.addEventListener("click", () => openModal(item));
-    }
+    if (readable) main.addEventListener("click", () => openModal(item));
 
     // drag source
     li.addEventListener("dragstart", (e) => {
@@ -265,9 +256,8 @@
   }
 
   function pulsePoints() {
-    [els.todayPoints, els.sideToday].forEach((el) => {
-      el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse");
-    });
+    const el = els.sideToday;
+    el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse");
   }
 
   function removeItem(id) {
@@ -671,8 +661,8 @@
         const parsed = JSON.parse(reader.result);
         if (!parsed.items || !parsed.completions) throw new Error("bad file");
         state = parsed;
-        if (!state.settings) state.settings = { showCompleted: false, theme: "light" };
-        if (!state.settings.theme) state.settings.theme = "light";
+        if (!state.settings) state.settings = { showCompleted: false, theme: "dark" };
+        if (!state.settings.theme) state.settings.theme = "dark";
         save(); applyTheme(); renderAll();
         toast("Backup restored.");
       } catch (e) { toast("Invalid backup file."); }
@@ -707,7 +697,6 @@
     });
     document.getElementById("todayBtn").addEventListener("click", () => { currentDate = ymd(new Date()); renderDay(); });
 
-    els.showCompletedToggle.addEventListener("change", () => setShowCompleted(els.showCompletedToggle.checked));
     if (els.showCompletedToggle2) els.showCompletedToggle2.addEventListener("change", () => setShowCompleted(els.showCompletedToggle2.checked));
     if (els.themeToggle) els.themeToggle.addEventListener("change", () => {
       state.settings.theme = els.themeToggle.checked ? "dark" : "light";
@@ -732,33 +721,6 @@
       if (!wasDone) { pulsePoints(); closeModal(); }
     });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !els.modal.hidden) closeModal(); });
-
-    // settings add form
-    const addType = document.getElementById("addType");
-    const addTextWrap = document.getElementById("addTextWrap");
-    function syncTextVisibility() { addTextWrap.style.display = addType.value === "todo" ? "none" : ""; }
-    addType.addEventListener("change", syncTextVisibility);
-    syncTextVisibility();
-
-    document.getElementById("addForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const type = addType.value;
-      const title = document.getElementById("addTitle").value.trim();
-      const text = document.getElementById("addText").value.trim();
-      const points = Math.max(1, Math.min(100, parseInt(document.getElementById("addPoints").value, 10) || 1));
-      if (!title) return;
-      state.items.push({
-        id: uid(), key: null, kind: type === "todo" ? "todo" : "prayer", title,
-        text: type === "todo" ? "" : text, timeOfDay: type === "todo" ? "todo" : type,
-        points, active: true, builtin: false,
-      });
-      save();
-      e.target.reset();
-      document.getElementById("addPoints").value = 1;
-      syncTextVisibility();
-      renderAll();
-      toast(`Added "${title}".`);
-    });
 
     document.getElementById("exportBtn").addEventListener("click", exportData);
     document.getElementById("importBtn").addEventListener("click", () => document.getElementById("importFile").click());
