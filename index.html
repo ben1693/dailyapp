@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0f1622" />
+  <meta name="theme-color" content="#16202e" />
   <title>Lauds &mdash; Daily Prayer for Men</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="src/styles.css" />
 </head>
 <body>
@@ -24,16 +24,15 @@
       </div>
 
       <nav class="side-nav">
-        <button class="nav-item active" data-view="day">
-          <span class="nav-ico">&#9788;</span><span>Daily</span>
-        </button>
-        <button class="nav-item" data-view="stats">
-          <span class="nav-ico">&#9650;</span><span>Stats</span>
-        </button>
-        <button class="nav-item" data-view="manage">
-          <span class="nav-ico">&#9881;</span><span>Manage</span>
-        </button>
+        <button class="nav-item active" data-view="day"><span class="nav-ico">&#9788;</span><span>Daily</span></button>
+        <button class="nav-item" data-view="stats"><span class="nav-ico">&#9650;</span><span>Stats</span></button>
+        <button class="nav-item" data-view="settings"><span class="nav-ico">&#9881;</span><span>Settings</span></button>
       </nav>
+
+      <a class="scripture-link" href="https://www.biblegateway.com/passage/?search=Romans+12&version=RSVCE" target="_blank" rel="noopener">
+        <span class="scripture-ico">&#9783;</span>
+        <span class="scripture-text">Read Scripture<small>BibleGateway &#8599;</small></span>
+      </a>
 
       <div class="sidebar-stats">
         <div class="mini-stat">
@@ -46,7 +45,9 @@
         </div>
       </div>
 
-      <p class="sidebar-quote">&ldquo;Pray without ceasing.&rdquo;<span>1 Thess. 5:17</span></p>
+      <a class="sidebar-quote" href="https://www.biblegateway.com/passage/?search=1+Thessalonians+5:16-18&version=RSVCE" target="_blank" rel="noopener">
+        &ldquo;Pray without ceasing.&rdquo;<span>1 Thessalonians 5:17 &#8599;</span>
+      </a>
     </aside>
 
     <!-- ===== Main ===== -->
@@ -81,33 +82,45 @@
           <section class="block" data-block="morning">
             <div class="block-head">
               <h2><span class="block-icon">&#9788;</span> Morning</h2>
-              <span class="block-count" id="count-morning"></span>
+              <div class="block-head-right">
+                <span class="block-count" id="count-morning"></span>
+                <button class="add-mini" data-add="morning" title="Add to Morning">+</button>
+              </div>
             </div>
-            <ul class="prayer-list" id="list-morning"></ul>
+            <ul class="prayer-list" id="list-morning" data-block="morning"></ul>
           </section>
 
           <section class="block" data-block="afternoon">
             <div class="block-head">
               <h2><span class="block-icon">&#9728;</span> Afternoon</h2>
-              <span class="block-count" id="count-afternoon"></span>
+              <div class="block-head-right">
+                <span class="block-count" id="count-afternoon"></span>
+                <button class="add-mini" data-add="afternoon" title="Add to Afternoon">+</button>
+              </div>
             </div>
-            <ul class="prayer-list" id="list-afternoon"></ul>
+            <ul class="prayer-list" id="list-afternoon" data-block="afternoon"></ul>
           </section>
 
           <section class="block" data-block="evening">
             <div class="block-head">
               <h2><span class="block-icon">&#9789;</span> Evening</h2>
-              <span class="block-count" id="count-evening"></span>
+              <div class="block-head-right">
+                <span class="block-count" id="count-evening"></span>
+                <button class="add-mini" data-add="evening" title="Add to Evening">+</button>
+              </div>
             </div>
-            <ul class="prayer-list" id="list-evening"></ul>
+            <ul class="prayer-list" id="list-evening" data-block="evening"></ul>
           </section>
 
           <section class="block" data-block="todo">
             <div class="block-head">
               <h2><span class="block-icon">&#10003;</span> Tasks</h2>
-              <span class="block-count" id="count-todo"></span>
+              <div class="block-head-right">
+                <span class="block-count" id="count-todo"></span>
+                <button class="add-mini" data-add="todo" title="Add a task">+</button>
+              </div>
             </div>
-            <ul class="prayer-list" id="list-todo"></ul>
+            <ul class="prayer-list" id="list-todo" data-block="todo"></ul>
           </section>
         </div>
 
@@ -117,6 +130,7 @@
             <span class="switch-track"><span class="switch-thumb"></span></span>
             <span class="switch-text">Show completed items</span>
           </label>
+          <span class="hint-drag">Drag prayers between sections &middot; hover a row to remove</span>
         </div>
       </main>
 
@@ -137,11 +151,7 @@
             <div id="heatmap" class="heatmap"></div>
             <div class="heat-legend">
               <span>Less</span>
-              <span class="heat-cell l0"></span>
-              <span class="heat-cell l1"></span>
-              <span class="heat-cell l2"></span>
-              <span class="heat-cell l3"></span>
-              <span class="heat-cell l4"></span>
+              <span class="heat-cell l0"></span><span class="heat-cell l1"></span><span class="heat-cell l2"></span><span class="heat-cell l3"></span><span class="heat-cell l4"></span>
               <span>More</span>
             </div>
           </div>
@@ -158,8 +168,34 @@
         </section>
       </main>
 
-      <!-- MANAGE VIEW -->
-      <main id="view-manage" class="view">
+      <!-- SETTINGS VIEW -->
+      <main id="view-settings" class="view">
+        <section class="panel">
+          <div class="panel-head"><h3>Appearance</h3></div>
+          <div class="setting-row">
+            <div class="setting-label"><span>Dark mode</span><small>Switch between light and dark themes</small></div>
+            <label class="switch">
+              <input type="checkbox" id="themeToggle" />
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label"><span>Show completed by default</span><small>Keep finished items visible instead of hiding them for the day</small></div>
+            <label class="switch">
+              <input type="checkbox" id="showCompletedToggle2" />
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h3>Scripture</h3></div>
+          <div class="setting-row">
+            <div class="setting-label"><span>Daily reading</span><small>Open the Word in a new tab</small></div>
+            <a class="btn btn-accent" href="https://www.biblegateway.com/" target="_blank" rel="noopener">Open BibleGateway &#8599;</a>
+          </div>
+        </section>
+
         <section class="panel">
           <div class="panel-head"><h3>Add Custom Prayer or Task</h3></div>
           <form id="addForm" class="add-form">
@@ -189,10 +225,7 @@
         </section>
 
         <section class="panel">
-          <div class="panel-head">
-            <h3>Library</h3>
-            <span class="panel-sub">toggle items on or off your daily list</span>
-          </div>
+          <div class="panel-head"><h3>Library</h3><span class="panel-sub">toggle items on or off your daily list</span></div>
           <div id="manageList" class="manage-list"></div>
         </section>
 
