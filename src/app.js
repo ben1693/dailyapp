@@ -159,7 +159,7 @@
   const els = {};
   function cacheEls() {
     [
-      "todayPoints", "streakValue", "streakPill",
+      "todayPoints", "sideStreak", "sideToday",
       "dateMain", "dateSub",
       "dayProgressFill", "dayProgressText",
       "showCompletedToggle",
@@ -225,8 +225,8 @@
     els.dayProgressFill.style.width = pct + "%";
 
     const streak = currentStreak();
-    els.streakValue.textContent = streak;
-    els.streakPill.classList.toggle("hot", streak >= 3);
+    els.sideStreak.textContent = streak;
+    els.sideToday.textContent = pointsForDate(ymd(new Date()));
 
     els.showCompletedToggle.checked = state.settings.showCompleted;
 
@@ -600,7 +600,7 @@
   }
 
   function switchView(view) {
-    document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.view === view));
+    document.querySelectorAll(".nav-item").forEach((t) => t.classList.toggle("active", t.dataset.view === view));
     document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
     document.getElementById("view-" + view).classList.add("active");
     if (view === "stats") renderStats();
@@ -660,7 +660,7 @@
    *  Event wiring
    * ============================================================ */
   function wire() {
-    document.querySelectorAll(".tab").forEach((tab) => {
+    document.querySelectorAll(".nav-item").forEach((tab) => {
       tab.addEventListener("click", () => switchView(tab.dataset.view));
     });
 
