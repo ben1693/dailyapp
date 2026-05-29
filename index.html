@@ -26,6 +26,7 @@
       <nav class="side-nav">
         <button class="nav-item active" data-view="day"><span class="nav-ico">&#9788;</span><span>Daily</span></button>
         <button class="nav-item" data-view="stats"><span class="nav-ico">&#9650;</span><span>Stats</span></button>
+        <button class="nav-item" data-view="confession"><span class="nav-ico">&#10013;</span><span>Confession</span></button>
         <button class="nav-item" data-view="settings"><span class="nav-ico">&#9881;</span><span>Settings</span></button>
       </nav>
 
@@ -174,6 +175,44 @@
         </section>
       </main>
 
+      <!-- CONFESSION VIEW -->
+      <main id="view-confession" class="view">
+        <section class="panel">
+          <div class="panel-head"><h3>Last Confession</h3></div>
+          <div id="confessStatus" class="confess-status"></div>
+          <div class="confess-log">
+            <label class="confess-log-field">Date
+              <input type="date" id="confessDate" />
+            </label>
+            <button class="btn btn-accent btn-sm" id="logConfessBtn">Log confession</button>
+            <button class="btn btn-sm" id="confessTodayBtn">I went today</button>
+          </div>
+          <p id="confessHistory" class="muted small"></p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h3>Examination of Conscience</h3><span class="panel-sub" id="examenCount"></span></div>
+          <div class="examen-controls">
+            <label class="examen-state">Examine as
+              <select id="stateInLife"></select>
+            </label>
+            <button class="btn btn-sm" id="clearExamen">Clear notes</button>
+          </div>
+          <p class="muted small examen-note">Checkmarks are a private aid to memory, stored only on this device, never included in backups, and cleared when you log a confession. Examine yourself gently, in the light of God's mercy &mdash; this is a help, not a cause for scruples.</p>
+          <div id="examenList" class="examen-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h3>How to Make a Good Confession</h3></div>
+          <ol id="confessSteps" class="confess-steps"></ol>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h3>Act of Contrition</h3></div>
+          <p id="actContrition" class="confess-prayer"></p>
+        </section>
+      </main>
+
     </div>
   </div>
 
@@ -193,6 +232,7 @@
 
   <script src="src/data.js"></script>
   <script src="src/liturgical.js"></script>
+  <script src="src/confession.js"></script>
   <script src="src/app.js"></script>
 </body>
 </html>

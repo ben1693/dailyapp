@@ -36,6 +36,15 @@ visualizations.
   memorials (not exhaustive), and **Ascension** & **Corpus Christi** use the
   universal-calendar Thursday (some countries, including most US dioceses,
   transfer them to the following Sunday).
+- **Confession companion** — a dedicated tab with: a **last-confession tracker**
+  ("days since," with a gentle nudge after a while); a structured **examination
+  of conscience** by the Ten Commandments + Precepts of the Church, with a
+  **state-in-life filter** (general / single / married / father / workplace) and
+  checkable items that build a private "bring to confession" list; the
+  step-by-step **rite of confession** (with the "it has been ___" line auto-filled
+  from your tracker); and the **Act of Contrition**. The examination checkmarks
+  are stored in a *separate* local key that is **never** part of the backup
+  export and are cleared whenever you log a confession.
 - **History navigation** — step back through previous days to log or review.
 - **Private & local** — all data lives in your browser via `localStorage`.
   Export a JSON backup any time and re-import it later.
@@ -65,6 +74,8 @@ src/styles.css     iron-&-gold theme
 src/data.js        default Catholic prayer library (full prayer texts)
 src/liturgical.js  offline liturgical calendar (Easter computus, seasons,
                    colors, feasts, fast/abstinence)
+src/confession.js  confession companion content (examination of conscience,
+                   the rite, Act of Contrition)
 src/app.js         all logic: state, completions, streaks, charts, storage
 ```
 

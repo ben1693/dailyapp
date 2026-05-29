@@ -50,8 +50,26 @@
         timeOfDay: "todo", points: t.points, active: t.defaultActive, builtin: true,
       });
     });
-    return { items, completions: {}, settings: { showCompleted: false, theme: "dark" } };
+    return {
+      items, completions: {},
+      settings: { showCompleted: false, theme: "dark" },
+      confession: { history: [], stateInLife: "all" },
+    };
   }
+
+  /* Examination notes live in their OWN storage key — never part of the
+   * exported backup, cleared on confession. Avoids carrying a saved list
+   * of one's sins around. */
+  const EXAMEN_KEY = "lauds.examen.v1";
+  let examenSet = new Set();
+  function loadExamen() {
+    try { examenSet = new Set(JSON.parse(localStorage.getItem(EXAMEN_KEY) || "[]")); }
+    catch (e) { examenSet = new Set(); }
+  }
+  function saveExamen() {
+    try { localStorage.setItem(EXAMEN_KEY, JSON.stringify([...examenSet])); } catch (e) {}
+  }
+  function clearExamen() { examenSet.clear(); saveExamen(); }
 
   function load() {
     try {
@@ -64,6 +82,9 @@
         if (!state.settings) state.settings = {};
         if (typeof state.settings.showCompleted !== "boolean") state.settings.showCompleted = false;
         if (!state.settings.theme) state.settings.theme = "dark";
+        if (!state.confession) state.confession = { history: [], stateInLife: "all" };
+        if (!Array.isArray(state.confession.history)) state.confession.history = [];
+        if (!state.confession.stateInLife) state.confession.stateInLife = "all";
       }
     } catch (e) {
       console.error("Failed to load state, resetting.", e);
@@ -131,6 +152,8 @@
       "statStreak", "statBest", "statTotal", "statDays", "stat30", "statAvg",
       "heatmap", "heatmapRange", "barChart", "habitBars",
       "manageList", "modal", "modalTitle", "modalText", "modalComplete", "modalClose", "toast",
+      "confessStatus", "confessDate", "logConfessBtn", "confessTodayBtn", "confessHistory",
+      "examenCount", "stateInLife", "clearExamen", "examenList", "confessSteps", "actContrition",
     ].forEach((id) => (els[id] = document.getElementById(id)));
     ALL_BLOCKS.forEach((b) => {
       els["list-" + b] = document.getElementById("list-" + b);
@@ -653,6 +676,161 @@
     toastTimer = setTimeout(() => { els.toast.classList.remove("show"); setTimeout(() => (els.toast.hidden = true), 250); }, 2400);
   }
 
+  /* ============================================================
+   *  Confession companion
+   * ============================================================ */
+  function lastConfession() {
+    const h = state.confession.history;
+    return h.length ? h[h.length - 1] : null;
+  }
+  function humanizeSince(dateKey) {
+    if (!dateKey) return "It has been some time since my last confession.";
+    const days = daysBetween(dateKey, ymd(new Date()));
+    if (days <= 0) return "I last confessed today.";
+    if (days === 1) return "It has been one day since my last confession.";
+    if (days < 14) return `It has been ${days} days since my last confession.`;
+    if (days < 56) return `It has been ${Math.round(days / 7)} weeks since my last confession.`;
+    if (days < 365) return `It has been about ${Math.round(days / 30)} months since my last confession.`;
+    return "It has been over a year since my last confession.";
+  }
+
+  function logConfession(dateKey) {
+    if (!dateKey) return;
+    if (dateKey > ymd(new Date())) { toast("That date is in the future."); return; }
+    if (!state.confession.history.includes(dateKey)) {
+      state.confession.history.push(dateKey);
+      state.confession.history.sort();
+    }
+    clearExamen();
+    save();
+    renderConfession();
+    toast("Confession logged. Examination notes cleared.");
+  }
+
+  function renderConfession() {
+    // populate the state-in-life select once
+    if (els.stateInLife && !els.stateInLife.options.length) {
+      window.EXAMEN_STATES.forEach((s) => {
+        const o = document.createElement("option");
+        o.value = s.key; o.textContent = s.label;
+        els.stateInLife.appendChild(o);
+      });
+    }
+    els.stateInLife.value = state.confession.stateInLife;
+
+    // status
+    const last = lastConfession();
+    if (last) {
+      const days = daysBetween(last, ymd(new Date()));
+      const nice = parseYmd(last).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+      let nudge = "";
+      if (days >= 40) nudge = `<span class="confess-nudge">Consider going again soon.</span>`;
+      els.confessStatus.innerHTML =
+        `<span class="confess-days">${days}</span>` +
+        `<div class="confess-since"><span>day${days === 1 ? "" : "s"} since your last confession</span>` +
+        `<small>${nice}</small>${nudge}</div>`;
+    } else {
+      els.confessStatus.innerHTML = `<div class="confess-since"><span>No confession logged yet</span>` +
+        `<small>Log a date below to begin tracking.</small></div>`;
+    }
+
+    // history (recent few)
+    const h = state.confession.history;
+    if (h.length > 1) {
+      const recent = h.slice(-5).reverse().map((d) => parseYmd(d).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }));
+      els.confessHistory.textContent = "Recent: " + recent.join("  ·  ");
+    } else {
+      els.confessHistory.textContent = "";
+    }
+
+    // examination list
+    renderExamen();
+
+    // count
+    const count = examenSet.size;
+    els.examenCount.textContent = count ? `${count} noted` : "";
+
+    // steps (personalized)
+    const sinceLine = humanizeSince(last);
+    els.confessSteps.innerHTML = "";
+    window.CONFESSION_STEPS.forEach((step) => {
+      const li = document.createElement("li");
+      li.textContent = step.replace("{SINCE}", sinceLine);
+      els.confessSteps.appendChild(li);
+    });
+
+    els.actContrition.textContent = window.ACT_OF_CONTRITION;
+  }
+
+  let examenOpen = new Set(); // which commandments are expanded (session only)
+  function renderExamen() {
+    const filter = state.confession.stateInLife;
+    const container = els.examenList;
+    container.innerHTML = "";
+    window.EXAMEN.forEach((cmd, idx) => {
+      const visible = cmd.items.filter((it) => !it.states || filter === "all" || it.states.includes(filter));
+      if (visible.length === 0) return;
+      const notedHere = visible.filter((it) => examenSet.has(it.id)).length;
+
+      const block = document.createElement("div");
+      block.className = "examen-cmd" + (examenOpen.has(idx) ? " open" : "");
+
+      const head = document.createElement("button");
+      head.className = "examen-cmd-head";
+      head.innerHTML =
+        `<span class="examen-num">${cmd.n}</span>` +
+        `<span class="examen-cmd-title">${escapeHtml(cmd.title)}</span>` +
+        (notedHere ? `<span class="examen-noted">${notedHere}</span>` : "") +
+        `<span class="examen-chev">&#8250;</span>`;
+      head.addEventListener("click", () => {
+        if (examenOpen.has(idx)) examenOpen.delete(idx); else examenOpen.add(idx);
+        block.classList.toggle("open");
+      });
+
+      const body = document.createElement("div");
+      body.className = "examen-cmd-body";
+      if (cmd.sub) {
+        const sub = document.createElement("p");
+        sub.className = "examen-sub";
+        sub.textContent = cmd.sub;
+        body.appendChild(sub);
+      }
+      const ul = document.createElement("ul");
+      visible.forEach((it) => {
+        const li = document.createElement("li");
+        li.className = "examen-item";
+        const label = document.createElement("label");
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = examenSet.has(it.id);
+        cb.addEventListener("change", () => {
+          if (cb.checked) examenSet.add(it.id); else examenSet.delete(it.id);
+          saveExamen();
+          els.examenCount.textContent = examenSet.size ? `${examenSet.size} noted` : "";
+          const noted = head.querySelector(".examen-noted");
+          const n = visible.filter((x) => examenSet.has(x.id)).length;
+          if (noted) { if (n) noted.textContent = n; else noted.remove(); }
+          else if (n) {
+            const span = document.createElement("span");
+            span.className = "examen-noted"; span.textContent = n;
+            head.insertBefore(span, head.querySelector(".examen-chev"));
+          }
+          li.classList.toggle("checked", cb.checked);
+        });
+        const span = document.createElement("span");
+        span.textContent = it.q;
+        label.appendChild(cb); label.appendChild(span);
+        if (cb.checked) li.classList.add("checked");
+        li.appendChild(label);
+        ul.appendChild(li);
+      });
+      body.appendChild(ul);
+      block.appendChild(head);
+      block.appendChild(body);
+      container.appendChild(block);
+    });
+  }
+
   function switchView(view) {
     openInlineBlock = null;
     document.querySelectorAll(".nav-item").forEach((t) => t.classList.toggle("active", t.dataset.view === view));
@@ -660,6 +838,7 @@
     document.getElementById("view-" + view).classList.add("active");
     if (view === "stats") renderStats();
     if (view === "settings") renderManage();
+    if (view === "confession") renderConfession();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -667,6 +846,7 @@
     renderDay();
     if (document.getElementById("view-stats").classList.contains("active")) renderStats();
     if (document.getElementById("view-settings").classList.contains("active")) renderManage();
+    if (document.getElementById("view-confession").classList.contains("active")) renderConfession();
   }
 
   /* ---------- Data ---------- */
@@ -696,6 +876,7 @@
   function resetAll() {
     if (!confirm("Reset everything — prayers, tasks, and all history? This cannot be undone.")) return;
     state = defaultState(); save(); applyTheme();
+    clearExamen();
     currentDate = ymd(new Date());
     renderAll(); switchView("day");
     toast("Reset complete.");
@@ -727,6 +908,17 @@
       save(); applyTheme();
     });
 
+    // confession companion
+    els.confessDate.value = ymd(new Date());
+    els.logConfessBtn.addEventListener("click", () => logConfession(els.confessDate.value));
+    els.confessTodayBtn.addEventListener("click", () => { els.confessDate.value = ymd(new Date()); logConfession(ymd(new Date())); });
+    els.clearExamen.addEventListener("click", () => {
+      if (examenSet.size === 0 || confirm("Clear all examination checkmarks?")) { clearExamen(); renderConfession(); }
+    });
+    els.stateInLife.addEventListener("change", () => {
+      state.confession.stateInLife = els.stateInLife.value; save(); renderExamen();
+    });
+
     // inline add buttons + drop targets
     document.querySelectorAll(".add-mini").forEach((btn) =>
       btn.addEventListener("click", () => openInlineAdd(btn.dataset.add)));
@@ -755,6 +947,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     cacheEls();
     load();
+    loadExamen();
     wire();
     renderDay();
   });

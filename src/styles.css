@@ -319,6 +319,51 @@ textarea { resize: vertical; }
 .data-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
 
 /* ============================================================
+ *  Confession companion
+ * ============================================================ */
+.confess-status { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+.confess-days { font-family: var(--serif); font-size: 56px; font-weight: 700; color: var(--accent); line-height: 1; }
+.confess-since { display: flex; flex-direction: column; gap: 3px; }
+.confess-since > span { font-size: 15px; font-weight: 600; color: var(--ink); }
+.confess-since small { font-size: 12.5px; color: var(--ink-faint); }
+.confess-nudge { font-size: 12.5px; color: var(--accent-bright); font-weight: 600; margin-top: 4px; }
+
+.confess-log { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
+.confess-log-field { display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); }
+.confess-log-field input { width: auto; }
+.confess-history { margin-top: 10px; }
+
+.examen-controls { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
+.examen-state { display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); }
+.examen-state select { width: auto; min-width: 200px; }
+.examen-note { margin: 0 0 18px; line-height: 1.6; }
+
+.examen-list { display: flex; flex-direction: column; }
+.examen-cmd { border-bottom: 1px solid var(--line-soft); }
+.examen-cmd-head {
+  display: flex; align-items: center; gap: 14px; width: 100%;
+  background: transparent; border: none; cursor: pointer;
+  padding: 16px 2px; text-align: left; color: var(--ink); font-family: inherit;
+}
+.examen-num { flex: 0 0 auto; width: 34px; font-family: var(--serif); font-size: 16px; font-weight: 700; color: var(--accent); text-align: center; }
+.examen-cmd-title { flex: 1; font-size: 14.5px; font-weight: 600; }
+.examen-noted { flex: 0 0 auto; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.examen-chev { flex: 0 0 auto; color: var(--ink-faint); font-size: 20px; transition: transform .2s; }
+.examen-cmd.open .examen-chev { transform: rotate(90deg); }
+.examen-cmd-body { display: none; padding: 0 2px 18px 50px; }
+.examen-cmd.open .examen-cmd-body { display: block; }
+.examen-sub { margin: 0 0 12px; font-size: 13px; color: var(--ink-faint); font-style: italic; }
+.examen-cmd-body ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.examen-item label { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 14px; color: var(--ink-2); line-height: 1.5; }
+.examen-item input { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); cursor: pointer; }
+.examen-item.checked label { color: var(--ink); }
+
+.confess-steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.confess-steps li { font-size: 14.5px; line-height: 1.65; color: var(--ink-2); padding-left: 6px; }
+.confess-steps li::marker { color: var(--accent); font-weight: 700; }
+.confess-prayer { font-size: 16px; line-height: 1.85; color: var(--ink-2); margin: 0; }
+
+/* ============================================================
  *  Modal & toast
  * ============================================================ */
 .modal-overlay { position: fixed; inset: 0; background: rgba(8,14,22,.7); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 50; animation: fade .2s ease; }
